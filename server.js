@@ -3,6 +3,8 @@ const path = require('path');
 const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+require('dotenv').config(); //.env
+
 
 const app = express();
 app.use(cors());
@@ -10,10 +12,11 @@ app.use(express.json());
 
 // MySQL-Verbindung
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'password', // muss angepasst werden
-    database: 'FussballvereinDB'
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER, 
+    password: process.env.DATABASE_PASSWORD, 
+    database: process.env.DATABASE_NAME, 
+    port: process.env.DATABASE_PORT || 3306, 
 });
 
 // Verbindung testen
