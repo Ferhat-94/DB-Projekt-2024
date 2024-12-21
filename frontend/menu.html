@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datenbank-Projekt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(90deg, #CA0D0D, #E30613);
+            color: #FFF;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        nav {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        nav a {
+            color: #FFF;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 5px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #575757;
+        }
+
+        .scrollable-container {
+            flex: 1;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .scrollable-container h2 {
+            margin: 0 0 10px;
+            font-size: 1.5rem;
+            color: #E30613;
+        }
+
+        .scrollable-container p {
+            margin: 0;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: #FFF;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #E30613;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Datenbank-Projekt</h1>
+        <p>Digitalisierung des Fussballinventars für meinen Fussballverein</p>
+    </header>
+
+    <nav>
+        <a href="menu.html">Hauptmenü</a>
+        <a href="produkte.html">Produktekatalog</a>
+        <a href="queries.html">Queries</a>
+        <a href="admin.html" class="admin-link">Admin-Bereich</a>
+        <a href="inventar.html">Inventar</a>
+        <a href="Benutzerverwaltung.html">Benutzerverwaltung</a>
+        <a href="Einkaufen.html">Einkaufen</a>
+        <a href="Learnings.html">Learnings</a>
+    </nav>
+
+    <div class="scrollable-container">
+        <h2>Motivation</h2>
+        <p>Ziel des Projektes ist es, den Fussballverein bei der Modernisierung und Digitalisierung seiner Strukturen zu unterstützen. 
+           In der Vergangenheit wurden Informationen auf Papier oder in Excel-Listen verwaltet, die nun durch eine Datenbank ersetzt werden sollen. 
+           Die Funktionalitäten der Datenbank umfassen die Verwaltung von Inventar, Benutzern und Produkten.</p>
+    </div>
+
+    <footer>
+        Datenbanken- HS 2024 | Projekt: Entwurf und Implementierung eines
+        Datenbanksystems | FA
+    </footer>
+</body>
+</html>

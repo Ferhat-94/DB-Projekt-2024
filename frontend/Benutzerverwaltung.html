@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benutzerverwaltung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(90deg, #CA0D0D, #E30613);
+            color: #FFF;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            margin: 0 0 10px;
+            color: #E30613;
+        }
+
+        textarea, input, select {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #E30613;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #CA0D0D;
+        }
+
+        .back-button {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: #555;
+        }
+
+        .results {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .results table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .results table, .results th, .results td {
+            border: 1px solid #ddd;
+        }
+
+        .results th {
+            background: #E30613;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .results td {
+            padding: 10px;
+        }
+
+        .results tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .results tr:nth-child(odd) {
+            background-color: #fff;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: #FFF;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Benutzerverwaltung</h1>
+    </header>
+    
+    <div style="text-align: center; padding: 10px;">
+        <button class="back-button" onclick="window.location.href='menu.html'">Zurück zum Menü</button>
+    </div>
+
+    <div class="container">
+        <input id="userId" type="hidden" />
+        <input id="Vorname" type="text" placeholder="Vorname" />
+        <input id="Nachname" type="text" placeholder="Nachname" />
+        <input id="E_Mail_Adresse" type="email" placeholder="E-Mail-Adresse" />
+        <input id="Telefonnummer" type="text" placeholder="Telefonnummer" />
+        <input id="Strasse" type="text" placeholder="Strasse" />
+        <input id="PLZ" type="text" placeholder="PLZ" />
+        <input id="Ort" type="text" placeholder="Ort" />
+        <select id="Rolle">
+            <option value="">Rolle</option>
+            <option value="Admin">Admin</option>
+            <option value="Vereinsmitglied">Vereinsmitglied</option>
+            <option value="Kunde">Kunde</option>
+        </select>
+        <input id="Rabatt" type="number" step="0.01" placeholder="Rabatt (%)" />
+        <input id="Geburtsdatum" type="date" placeholder="Geburtsdatum" />
+        <button onclick="saveUser()">Speichern</button>
+    </div>
+
+    <div class="container">
+        <h2>Aktuelle Benutzerliste</h2>
+        <div class="results" id="results"></div>
+    </div>
+
+    <footer>
+        &copy; 2024 DB-Projekt | Benutzerverwaltung
+    </footer>
+
+    <script>
+        async function fetchUsers() {
+            try {
+                const response = await fetch('http://localhost:8080/users');
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    document.getElementById('results').innerHTML = `<p style="color: red;">${data.error}</p>`;
+                }
+            } catch (err) {
+                document.getElementById('results').innerHTML = `<p style="color: red;">Fehler beim Abrufen der Benutzer: ${err.message}</p>`;
+            }
+        }
+
+        async function saveUser() {
+            const userId = document.getElementById('userId').value.trim() || null;
+            const Vorname = document.getElementById('Vorname').value.trim();
+            const Nachname = document.getElementById('Nachname').value.trim();
+            const E_Mail_Adresse = document.getElementById('E_Mail_Adresse').value.trim();
+            const Telefonnummer = document.getElementById('Telefonnummer').value.trim();
+            const Strasse = document.getElementById('Strasse').value.trim();
+            const PLZ = document.getElementById('PLZ').value.trim();
+            const Ort = document.getElementById('Ort').value.trim();
+            const Rolle = document.getElementById('Rolle').value.trim();
+            const Rabatt = parseFloat(document.getElementById('Rabatt').value) || 0;
+            const Geburtsdatum = document.getElementById('Geburtsdatum').value.trim();
+
+            if (!Vorname || !Nachname || !E_Mail_Adresse || !Rolle) {
+                alert('Bitte alle Pflichtfelder ausfüllen.');
+                return;
+            }
+
+            const body = { userId, Vorname, Nachname, E_Mail_Adresse, Telefonnummer, Strasse, PLZ, Ort, Rolle, Rabatt, Geburtsdatum };
+
+            try {
+                const response = await fetch('http://localhost:8080/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+
+                if (response.ok) {
+                    alert('Benutzer erfolgreich gespeichert.');
+                    fetchUsers();
+                } else {
+                    const error = await response.json();
+                    alert(`Fehler: ${error.error}`);
+                }
+            } catch (err) {
+                alert('Fehler beim Speichern des Benutzers.');
+            }
+        }
+
+        function displayResults(data) {
+            if (!data.length) {
+                document.getElementById('results').innerHTML = '<p>Keine Benutzer gefunden.</p>';
+                return;
+            }
+
+            let table = '<table>';
+            table += `<tr>
+                <th>ID</th>
+                <th>Vorname</th>
+                <th>Nachname</th>
+                <th>E-Mail</th>
+                <th>Rolle</th>
+                <th>Rabatt</th>
+                <th>Aktionen</th>
+            </tr>`;
+
+            data.forEach(user => {
+                table += `<tr>
+                    <td>${user.User_ID}</td>
+                    <td>${user.Vorname}</td>
+                    <td>${user.Nachname}</td>
+                    <td>${user.E_Mail_Adresse}</td>
+                    <td>${user.Rolle}</td>
+                    <td>${user.Rabatt}%</td>
+                    <td>
+                        <button onclick="editUser(
+                            ${user.User_ID}, 
+                            '${user.Vorname}', 
+                            '${user.Nachname}', 
+                            '${user.E_Mail_Adresse}',
+                            '${user.Telefonnummer || ""}',
+                            '${user.Strasse || ""}',
+                            '${user.PLZ || ""}',
+                            '${user.Ort || ""}',
+                            '${user.Rolle}',
+                            ${user.Rabatt}
+                        )">Bearbeiten</button>
+                        <button onclick="deleteUser(${user.User_ID})">Löschen</button>
+                    </td>
+                </tr>`;
+            });
+
+            table += '</table>';
+            document.getElementById('results').innerHTML = table;
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('Möchten Sie diesen Benutzer wirklich löschen?')) return;
+
+            try {
+                const response = await fetch(`http://localhost:8080/users/${userId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    alert('Benutzer erfolgreich gelöscht.');
+                    fetchUsers();
+                } else {
+                    alert('Fehler beim Löschen des Benutzers.');
+                }
+            } catch (err) {
+                alert('Fehler beim Löschen des Benutzers.');
+            }
+        }
+
+        function editUser(id, firstName, lastName, email, telefonnummer, strasse, plz, ort, role, discount) {
+            document.getElementById('userId').value = id;
+            document.getElementById('Vorname').value = firstName;
+            document.getElementById('Nachname').value = lastName;
+            document.getElementById('E_Mail_Adresse').value = email;
+            document.getElementById('Telefonnummer').value = telefonnummer;
+            document.getElementById('Strasse').value = strasse;
+            document.getElementById('PLZ').value = plz;
+            document.getElementById('Ort').value = ort;
+            document.getElementById('Rolle').value = role;
+            document.getElementById('Rabatt').value = discount;
+        }
+
+        fetchUsers();
+    </script>
+</body>
+</html>

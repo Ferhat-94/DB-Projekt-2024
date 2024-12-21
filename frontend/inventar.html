@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventarverwaltung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(90deg, #CA0D0D, #E30613);
+            color: #FFF;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            margin: 0 0 10px;
+            color: #E30613;
+        }
+
+        textarea, input, select {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #E30613;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #CA0D0D;
+        }
+
+        .back-button {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: #555;
+        }
+
+        .results {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .results table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .results table, .results th, .results td {
+            border: 1px solid #ddd;
+        }
+
+        .results th {
+            background: #E30613;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .results td {
+            padding: 10px;
+        }
+
+        .results tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .results tr:nth-child(odd) {
+            background-color: #fff;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: #FFF;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Inventarverwaltung</h1>
+    </header>
+
+    <div style="text-align: center; padding: 10px;">
+        <button class="back-button" onclick="window.location.href='menu.html'">Zurück zum Menü</button>
+    </div>
+
+    <div class="container">
+        <input id="productId" type="hidden" />
+        <input id="name" type="text" placeholder="Produktname" />
+        <select id="category">
+            <option value="">Kategorie</option>
+            <option value="Trikot">Trikot</option>
+            <option value="Short">Short</option>
+            <option value="Jacken">Jacken</option>
+            <option value="Hosen">Hosen</option>
+            <option value="Accessoires">Accessoires</option>
+        </select>
+        <input id="price" type="number" placeholder="Preis" step="0.01" />
+        <input id="Hersteller" type="text" placeholder="Hersteller" />
+        <textarea id="description" placeholder="Produktbeschreibung"></textarea>
+        <select id="usage">
+            <option value="">Nutzung</option>
+            <option value="Verkauf">Verkauf</option>
+            <option value="Intern">Intern</option>
+        </select>
+        <select id="size">
+            <option value="">Grösse</option>
+            <option value="XS">XS</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+            <option value="One Size">One Size</option>
+        </select>
+        <input id="stock" type="number" placeholder="Bestand" />
+        <button onclick="saveProduct()">Speichern</button>
+    </div>
+
+    <div class="container">
+        <h2>Aktueller Lagerbestand</h2>
+        <div class="results" id="results"></div>
+    </div>
+    
+    <footer>
+        &copy; 2024 DB-Projekt | Inventarverwaltung
+    </footer>
+
+<script>
+    async function fetchInventory() {
+        try {
+            const response = await fetch('http://localhost:8080/inventar');
+            const data = await response.json();
+
+            if (response.ok) {
+                displayResults(data);
+            } else {
+                document.getElementById('results').innerHTML = `<p style="color: red;">${data.error}</p>`;
+            }
+        } catch (err) {
+            document.getElementById('results').innerHTML = `<p style="color: red;">Fehler beim Abrufen des Lagerbestands: ${err.message}</p>`;
+        }
+    }
+
+    async function saveProduct() {
+        const productId = document.getElementById('productId').value.trim() || null;
+        const name = document.getElementById('name').value.trim();
+        const category = document.getElementById('category').value.trim();
+        const price = parseFloat(document.getElementById('price').value);
+        const Hersteller = document.getElementById('Hersteller').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const usage = document.getElementById('usage').value.trim();
+        const size = document.getElementById('size').value.trim();
+        const stock = parseInt(document.getElementById('stock').value);
+
+        const productData = {
+            productId,
+            name,
+            category,
+            price,
+            Hersteller,
+            description,
+            usage,
+            size,
+            stock,
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/inventar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(productData),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert('Produkt erfolgreich gespeichert.');
+                fetchInventory();
+            } else {
+                alert(`Fehler: ${data.error}`);
+            }
+        } catch (err) {
+            alert('Fehler beim Speichern des Produkts.');
+        }
+    }
+
+    function displayResults(data) {
+        if (!Array.isArray(data) || data.length === 0) {
+            document.getElementById('results').innerHTML = '<p>Keine Produkte gefunden.</p>';
+            return;
+        }
+
+        let table = '<table>';
+        table += `
+            <tr>
+                <th>Produkt-ID</th>
+                <th>Name</th>
+                <th>Kategorie</th>
+                <th>Preis</th>
+                <th>Größe</th>
+                <th>Bestand</th>
+                <th>Aktionen</th>
+            </tr>
+        `;
+
+        data.forEach(product => {
+            table += `
+                <tr>
+                    <td>${product.Product_ID}</td>
+                    <td>${product.Name}</td>
+                    <td>${product.Kategorie}</td>
+                    <td>${product.Preis} CHF</td>
+                    <td>${product.Size}</td>
+                    <td>${product.Stock}</td>
+                    <td>
+                        <button onclick="editProduct(${product.Product_ID}, '${product.Name}', '${product.Kategorie}', ${product.Preis}, '${product.Hersteller || ''}', '${product.Description || ''}', '${product.Size}', ${product.Stock})">Bearbeiten</button>
+
+                        <button onclick="deleteProduct(${product.Product_ID}, '${product.Size}')">Löschen</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        table += '</table>';
+        document.getElementById('results').innerHTML = table;
+    }
+
+    function editProduct(id, name, category, price, Hersteller, description, size, stock) {
+        document.getElementById('productId').value = id;
+        document.getElementById('name').value = name;
+        document.getElementById('category').value = category;
+        document.getElementById('price').value = price;
+        document.getElementById('Hersteller').value = Hersteller; 
+        document.getElementById('description').value = description;
+        document.getElementById('size').value = size;
+        document.getElementById('stock').value = stock;
+    }
+    fetchInventory();
+</script>
+    
+</body>
+</html>

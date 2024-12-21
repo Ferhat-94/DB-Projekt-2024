@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(90deg, #CA0D0D, #E30613);
+            color: #FFF;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        nav {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        nav a {
+            color: #FFF;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #575757;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .welcome-message {
+            font-size: 1.5rem;
+            color: #E30613;
+            margin-bottom: 20px;
+        }
+
+        .admin-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .admin-actions a {
+            text-decoration: none;
+            padding: 15px 30px;
+            background-color: #E30613;
+            color: #FFF;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .admin-actions a:hover {
+            background-color: #CA0D0D;
+            transform: scale(1.05);
+            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        footer {
+            background-color: #333;
+            color: #FFF;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #E30613;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin Dashboard</h1>
+    </header>
+
+    <nav>
+        <a href="../menu.html">Hauptmenü</a>
+        <a href="../inventar.html">Inventarverwaltung</a>
+        <a href="../Benutzerverwaltung.html">Benutzerverwaltung</a>
+    </nav>
+
+    <div class="container">
+        <div id="welcome-message" class="welcome-message"></div>
+        <div class="admin-actions">
+     
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2024 Admin Dashboard |
+    </footer>
+
+    <script>
+        async function fetchDashboard() {
+            const adminId = localStorage.getItem('adminId');
+            if (!adminId) {
+                alert('Nicht autorisiert');
+                window.location.href = '/admin.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8080/admin/dashboard', {
+                    headers: { 'x-user-id': adminId },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('welcome-message').innerText = data.message;
+                } else {
+                    alert('Nicht autorisiert');
+                    window.location.href = '/admin.html';
+                }
+            } catch (error) {
+                console.error('Fehler beim Abrufen des Dashboards:', error.message);
+                alert('Ein Fehler ist aufgetreten.');
+            }
+        }
+
+        fetchDashboard();
+    </script>
+</body>
+</html>

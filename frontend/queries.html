@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queries</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(90deg, #CA0D0D, #E30613);
+            color: #FFF;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        nav {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav a {
+            color: #FFF;
+            text-decoration: none;
+            padding: 14px 20px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #575757;
+        }
+
+        .back-button {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px auto;
+            display: block;
+            max-width: 200px;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background: #555;
+        }
+
+        .container {
+            flex: 1;
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .container h2 {
+            margin: 0 0 10px;
+            font-size: 1.5rem;
+            color: #E30613;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #E30613;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #CA0D0D;
+        }
+
+        .results {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .results table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .results table, .results th, .results td {
+            border: 1px solid #ddd;
+        }
+
+        .results th {
+            background: #E30613;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .results td {
+            padding: 10px;
+            word-wrap: break-word;
+        }
+
+        .results tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .results tr:nth-child(odd) {
+            background-color: #fff;
+        }
+
+        footer {
+            background-color: #333;
+            color: #FFF;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #E30613;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SQL Queries</h1>
+    </header>
+
+    <button class="back-button" onclick="window.location.href='menu.html'">Zurück zum Menü</button>
+
+    <div class="container">
+        <h2>SQL-Abfrage</h2>
+        <textarea id="query" placeholder="Geben Sie Ihre SQL-Abfrage ein..."></textarea>
+        <button onclick="executeQuery()">Abfrage ausführen</button>
+
+        <div class="results" id="results"></div>
+    </div>
+
+    <footer>
+        &copy; 2024 DB-Projekt | Queries
+    </footer>
+
+    <script>
+        async function executeQuery() {
+            const query = document.getElementById('query').value;
+
+            if (!query.trim()) {
+                alert('Bitte geben Sie eine Abfrage ein.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8080/inventar/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    document.getElementById('results').innerHTML = `<p style="color: red;">${data.error}</p>`;
+                }
+            } catch (err) {
+                console.error('Fehler:', err);
+                document.getElementById('results').innerHTML = `<p style="color: red;">Fehler bei der Abfrage: ${err.message}</p>`;
+            }
+        }
+
+        function displayResults(data) {
+            if (!data.length) {
+                document.getElementById('results').innerHTML = '<p>Keine Ergebnisse gefunden.</p>';
+                return;
+            }
+
+            let table = '<table>';
+            table += '<tr>';
+            Object.keys(data[0]).forEach(key => {
+                table += `<th>${key}</th>`;
+            });
+            table += '</tr>';
+
+            data.forEach(row => {
+                table += '<tr>';
+                Object.keys(row).forEach(key => {
+                    table += `<td>${row[key]}</td>`;
+                });
+                table += '</tr>';
+            });
+
+            table += '</table>';
+            document.getElementById('results').innerHTML = table;
+        }
+    </script>
+</body>
+</html>
+

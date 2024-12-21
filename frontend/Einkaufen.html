@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einkaufen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(90deg, #CA0D0D, #E30613);
+            color: #FFF;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .back-button {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+            align-self: center;
+        }
+
+        .back-button:hover {
+            background: #555;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            margin: 0 0 10px;
+            font-size: 1.5rem;
+            color: #E30613;
+        }
+
+        .container select,
+        .container input {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .versandkosten-container {
+            display: none; /* Initially hide the Versandkosten field */
+        }
+
+        button {
+            background: #E30613;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #CA0D0D;
+        }
+
+        footer {
+            background-color: #333;
+            color: #FFF;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #E30613;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bestellung erstellen</h1>
+    </header>
+
+    <button class="back-button" onclick="window.location.href='menu.html'">Zurück zum Menü</button>
+
+    <div class="container">
+        <h2>Bestellung erstellen</h2>
+
+        <select id="User_ID" onchange="updateUserDiscount()">
+            <option value="">Benutzer auswählen</option>
+        </select>
+
+        <div id="orderItems">
+            <div class="order-item">
+                <select class="Product_ID" onchange="updatePrice(event)">
+                    <option value="">Produkt auswählen</option>
+                </select>
+                <input type="number" class="Menge" placeholder="Menge">
+                <input type="number" class="Einzelpreis" placeholder="Einzelpreis" step="0.01" disabled>
+            </div>
+        </div>
+        <button onclick="addOrderItem()">Weitere Produkte hinzufügen</button>
+
+        <select id="Lieferstatus" onchange="toggleVersandkostenField()">
+            <option value="Abholung">Abholung</option>
+            <option value="Versendet">Versendet</option>
+        </select>
+
+        <div id="versandkosten-container" class="versandkosten-container">
+            <input type="number" id="Versandkosten" placeholder="Versandkosten" step="0.01" value="5">
+        </div>
+
+        <input type="number" id="Rabatt" placeholder="Rabatt" step="0.01" readonly>
+
+        <button onclick="createOrder()">Bestellung erstellen</button>
+    </div>
+
+    <footer>
+        &copy; 2024 DB-Projekt | Einkaufen
+    </footer>
+
+    <script>
+        let users = [];
+        let products = [];
+
+        async function loadUsers() {
+            const response = await fetch('http://localhost:8080/users');
+            users = await response.json();
+
+            const userDropdown = document.getElementById('User_ID');
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.User_ID;
+                option.textContent = `${user.Vorname} ${user.Nachname}`;
+                userDropdown.appendChild(option);
+            });
+        }
+
+        function updateUserDiscount() {
+            const userDropdown = document.getElementById('User_ID');
+            const selectedUserId = parseInt(userDropdown.value);
+
+            const selectedUser = users.find(user => user.User_ID === selectedUserId);
+            if (selectedUser) {
+                document.getElementById('Rabatt').value = selectedUser.Rabatt || 0.00;
+            }
+        }
+
+        async function loadProducts() {
+            const response = await fetch('http://localhost:8080/inventar');
+            products = await response.json();
+
+            const productDropdowns = document.querySelectorAll('.Product_ID');
+            productDropdowns.forEach(dropdown => {
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.Product_ID;
+                    option.textContent = `${product.Name} (${product.Size})`;
+                    dropdown.appendChild(option);
+                });
+            });
+        }
+
+        function updatePrice(event) {
+            const selectedProductId = event.target.value;
+            const productDropdown = event.target;
+            const einzelpreisInput = productDropdown.closest('.order-item').querySelector('.Einzelpreis');
+            
+            const selectedProduct = products.find(product => product.Product_ID == selectedProductId);
+            if (selectedProduct) {
+                einzelpreisInput.value = selectedProduct.Preis;
+            }
+        }
+
+        function toggleVersandkostenField() {
+            const lieferstatus = document.getElementById('Lieferstatus').value;
+            const versandkostenContainer = document.getElementById('versandkosten-container');
+
+            if (lieferstatus === 'Versendet') {
+                versandkostenContainer.style.display = 'block';
+            } else {
+                versandkostenContainer.style.display = 'none';
+                document.getElementById('Versandkosten').value = 0; // Reset value
+            }
+        }
+
+        function addOrderItem() {
+            const orderItems = document.getElementById('orderItems');
+            const newItem = document.createElement('div');
+            newItem.className = 'order-item';
+            newItem.innerHTML = `
+                <select class="Product_ID" onchange="updatePrice(event)">
+                    <option value="">Produkt auswählen</option>
+                </select>
+                <input type="number" class="Menge" placeholder="Menge">
+                <input type="number" class="Einzelpreis" placeholder="Einzelpreis" step="0.01" disabled>
+            `;
+            orderItems.appendChild(newItem);
+
+            loadProducts();
+        }
+
+        async function createOrder() {
+            const User_ID = document.getElementById('User_ID').value;
+            const Lieferstatus = document.getElementById('Lieferstatus').value;
+            const Versandkosten = parseFloat(document.getElementById('Versandkosten').value) || 0;
+            const Rabatt = parseFloat(document.getElementById('Rabatt').value) || 0;
+
+            const orderItems = Array.from(document.querySelectorAll('.order-item')).map(item => ({
+                Product_ID: item.querySelector('.Product_ID').value,
+                Menge: parseInt(item.querySelector('.Menge').value),
+                Einzelpreis: parseFloat(item.querySelector('.Einzelpreis').value)
+            }));
+
+            if (!User_ID || !orderItems.every(item => item.Product_ID && item.Menge)) {
+                alert('Bitte alle Felder ausfüllen.');
+                return;
+            }
+
+            const body = { User_ID, items: orderItems, Lieferstatus, Versandkosten, Rabatt };
+
+            try {
+                const response = await fetch('http://localhost:8080/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`Bestellung erfolgreich erstellt: ${data.Order_ID}`);
+                } else {
+                    const error = await response.json();
+                    alert(`Fehler: ${error.error}`);
+                }
+            } catch (err) {
+                console.error('Fehler:', err);
+                alert('Fehler beim Erstellen der Bestellung.');
+            }
+        }
+
+        loadUsers();
+        loadProducts();
+    </script>
+</body>
+</html>

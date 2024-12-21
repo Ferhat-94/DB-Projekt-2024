@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learnings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(90deg, #CA0D0D, #E30613);
+            color: #FFF;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .back-button {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+            align-self: center;
+        }
+
+        .back-button:hover {
+            background: #555;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            margin: 0 0 10px;
+            font-size: 1.5rem;
+            color: #E30613;
+        }
+
+        .container p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        footer {
+            background-color: #333;
+            color: #FFF;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #E30613;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<header>
+    <h1>Learnings</h1>
+</header>
+
+<button class="back-button" onclick="window.location.href='menu.html'">Zurück zum Menü</button>
+
+<div class="container">
+    <h2>1. Die Wichtigkeit eines durchdachten ER-Modells</h2>
+    <p>Ein durchdachtes ER-Modell ist entscheidend für die spätere Umsetzung der Datenbank. Zum Beispiel habe ich zunächst Produktgrösse als Attribut in der Produktentität gespeichert. Hier ist jedoch der Grund, warum es sinnvoller ist, dies als eigene Tabelle darzustellen:</p>
+
+    <h2>2. Persönlicher Bezug</h2>
+    <p>Wenn ein Projekt mit etwas verbunden ist, das einem persönlich wichtig ist, steigt die Motivation zu lernen und es umzusetzen erheblich. Durch die Verknüpfung des Projekts mit persönlichen Anwendungsfällen wird nicht nur technisches Wissen erworben, sondern es werden auch reale Probleme gelöst.</p>
+
+    <h2>3. Die Macht der Datenbanken</h2>
+    <p>Die hier vorgestellte Projektarbeit demonstriert die Leistungsfähigkeit von Datenbanken. Eine gut strukturierte Datenbank bietet eine transparente Übersicht über Daten, beispielsweise Lagerbestände und Benutzerinformationen. Sie ermöglicht eine effiziente Nachvollziehbarkeit und Verwaltung der Daten. Somit stellt dies einen ersten Schritt in die Digitalisierung des Fussballvereins dar, wodurch die Verwendung von Excel-Listen zukünftig nicht mehr erforderlich sein wird.</p>
+</div>
+
+<footer>
+    &copy; 2024 DB-Projekt | Learnings
+</footer>
+</body>
+</html>

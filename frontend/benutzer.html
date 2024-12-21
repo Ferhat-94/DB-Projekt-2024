@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benutzerverwaltung</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #FFFBFB;
+            color: #393939;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #CA0D0D;
+            color: #FFFBFB;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .menu {
+            margin: 20px;
+            text-align: center;
+        }
+
+        .menu a {
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #E30613;
+            color: #FFFBFB;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .menu a:hover {
+            background-color: #CA0D0D;
+        }
+
+        .users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px;
+        }
+
+        .user-card {
+            background-color: #E0DCDC;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+
+        .user-card h3 {
+            color: #CA0D0D;
+        }
+
+        .user-card:hover {
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Benutzerverwaltung</h1>
+    </header>
+
+    <div class="menu">
+        <a href="menu.html">Hauptmenü</a>
+        <a href="produkte.html">Produktekatalog</a>
+        <a href="queries.html">Suchabfragen</a>
+        <a href="benutzer.html">Benutzerverwaltung</a>
+    </div>
+
+    <div class="users" id="user-list">Benutzer werden geladen...</div>
+
+    <script>
+        async function fetchUsers() {
+            try {
+                const response = await fetch('http://localhost:8080/query/1'); // API-Endpunkt für Benutzer
+                const users = await response.json();
+                const userList = document.getElementById('user-list');
+                userList.innerHTML = '';
+                users.forEach(user => {
+                    const userDiv = document.createElement('div');
+                    userDiv.className = 'user-card';
+                    userDiv.innerHTML = `
+                        <h3>${user.Vorname} ${user.Nachname}</h3>
+                        <p><strong>Email:</strong> ${user.EMail}</p>
+                        <p><strong>Rolle:</strong> ${user.Rolle}</p>
+                    `;
+                    userList.appendChild(userDiv);
+                });
+            } catch (error) {
+                document.getElementById('user-list').innerText = 'Fehler beim Laden der Benutzer.';
+            }
+        }
+        fetchUsers();
+    </script>
+</body>
+</html>

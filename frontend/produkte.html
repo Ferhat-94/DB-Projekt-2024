@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produktekatalog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(90deg, #CA0D0D, #E30613);
+            color: #FFF;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .back-button {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+            align-self: center;
+        }
+
+        .back-button:hover {
+            background: #555;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .filter select {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .product-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-card h3 {
+            color: #E30613;
+            margin-bottom: 10px;
+        }
+
+        .product-card p {
+            margin: 5px 0;
+        }
+
+        footer {
+            background-color: #333;
+            color: #FFF;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #E30613;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+</head>
+<body>
+    <header>
+        <h1>Produktekatalog</h1>
+    </header>
+
+    <button class="back-button" onclick="window.location.href='menu.html'">Zurück zum Menü</button>
+
+    <div class="container">
+        <div class="filter">
+            <select id="filter" onchange="applyFilter()">
+                <option value="Alle">Alle Produkte</option>
+                <option value="Verkauf">Produkte zum Verkauf</option>
+                <option value="Intern">Produkte für interne Nutzung</option>
+            </select>
+        </div>
+
+        <div class="products" id="product-list">Produkte werden geladen...</div>
+    </div>
+
+    <footer>
+        &copy; 2024 DB-Projekt | Produktekatalog
+    </footer>
+
+    <script>
+        let products = [];
+
+        async function fetchProducts() {
+            try {
+                const response = await fetch('http://localhost:8080/query/2'); // API-Endpunkt
+                products = await response.json();
+                displayProducts(products); // Zeige alle Produkte initial
+            } catch (error) {
+                document.getElementById('product-list').innerText = 'Fehler beim Laden der Produkte.';
+            }
+        }
+
+        function applyFilter() {
+            const filter = document.getElementById('filter').value;
+
+            if (filter === 'Alle') {
+                displayProducts(products);
+            } else {
+                const filteredProducts = products.filter(product => product.Nutzung === filter);
+                displayProducts(filteredProducts);
+            }
+        }
+
+        function displayProducts(productsToShow) {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+
+            if (productsToShow.length === 0) {
+                productList.innerHTML = '<p>Keine Produkte gefunden.</p>';
+                return;
+            }
+
+            productsToShow.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product-card';
+                productDiv.innerHTML = `
+                    <h3>${product.Produktname}</h3>
+                    <p><strong>Kategorie:</strong> ${product.Kategorie}</p>
+                    <p><strong>Preis:</strong> ${product.Preis} CHF</p>
+                    <p><strong>Nutzung:</strong> ${product.Nutzung}</p>
+                `;
+                productList.appendChild(productDiv);
+            });
+        }
+
+        fetchProducts();
+    </script>
+</body>
+</html>
