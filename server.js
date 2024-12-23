@@ -89,11 +89,11 @@ app.get('/search', (req, res) => {
 });
 
 // Statische Dateien bereitstellen
-app.use(express.static(path.join(__dirname, 'frontend')));
+app.use(express.static(path.join(__dirname, 'docs')));
 
 // Standardroute für "/"
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname,'frontend', 'index.html'));
+    res.sendFile(path.join(__dirname,'docs', 'index.html'));
 });
 
 
@@ -560,7 +560,7 @@ app.put('/orders/:Order_ID/status', (req, res) => {
 });
 
 // Statische Daten
-app.use(express.static(path.join(__dirname, 'frontend')));
+app.use(express.static(path.join(__dirname, 'docs')));
 
 
 // Server starten
