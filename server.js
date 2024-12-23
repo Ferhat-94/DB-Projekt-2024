@@ -93,7 +93,7 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Standardroute für "/"
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname,'frontend', 'menu.html'));
+    res.sendFile(path.join(__dirname,'frontend', 'index.html'));
 });
 
 
