@@ -88,7 +88,7 @@
     <script>
         async function fetchUsers() {
             try {
-                const response = await fetch('http://localhost:8080/query/1'); // API-Endpunkt für Benutzer
+                const response = await fetch('https://db-projekt-2024.onrender.com/query/1'); // API-Endpunkt für Benutzer
                 const users = await response.json();
                 const userList = document.getElementById('user-list');
                 userList.innerHTML = '';

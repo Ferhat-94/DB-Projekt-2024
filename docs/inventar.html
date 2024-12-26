@@ -173,118 +173,118 @@
     <footer>
         &copy; 2024 DB-Projekt | Inventarverwaltung
     </footer>
-
-<script>
-    async function fetchInventory() {
-        try {
-            const response = await fetch('http://localhost:8080/inventar');
-            const data = await response.json();
-
-            if (response.ok) {
-                displayResults(data);
-            } else {
-                document.getElementById('results').innerHTML = `<p style="color: red;">${data.error}</p>`;
+    
+    <script>
+        async function fetchInventory() {
+            try {
+                const response = await fetch('https://db-projekt-2024.onrender.com/inventar');
+                const data = await response.json();
+    
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    document.getElementById('results').innerHTML = `<p style="color: red;">${data.error}</p>`;
+                }
+            } catch (err) {
+                document.getElementById('results').innerHTML = `<p style="color: red;">Fehler beim Abrufen des Lagerbestands: ${err.message}</p>`;
             }
-        } catch (err) {
-            document.getElementById('results').innerHTML = `<p style="color: red;">Fehler beim Abrufen des Lagerbestands: ${err.message}</p>`;
         }
-    }
-
-    async function saveProduct() {
-        const productId = document.getElementById('productId').value.trim() || null;
-        const name = document.getElementById('name').value.trim();
-        const category = document.getElementById('category').value.trim();
-        const price = parseFloat(document.getElementById('price').value);
-        const Hersteller = document.getElementById('Hersteller').value.trim();
-        const description = document.getElementById('description').value.trim();
-        const usage = document.getElementById('usage').value.trim();
-        const size = document.getElementById('size').value.trim();
-        const stock = parseInt(document.getElementById('stock').value);
-
-        const productData = {
-            productId,
-            name,
-            category,
-            price,
-            Hersteller,
-            description,
-            usage,
-            size,
-            stock,
-        };
-
-        try {
-            const response = await fetch('http://localhost:8080/inventar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(productData),
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                alert('Produkt erfolgreich gespeichert.');
-                fetchInventory();
-            } else {
-                alert(`Fehler: ${data.error}`);
+    
+        async function saveProduct() {
+            const productId = document.getElementById('productId').value.trim() || null;
+            const name = document.getElementById('name').value.trim();
+            const category = document.getElementById('category').value.trim();
+            const price = parseFloat(document.getElementById('price').value);
+            const Hersteller = document.getElementById('Hersteller').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const usage = document.getElementById('usage').value.trim();
+            const size = document.getElementById('size').value.trim();
+            const stock = parseInt(document.getElementById('stock').value);
+    
+            const productData = {
+                productId,
+                name,
+                category,
+                price,
+                Hersteller,
+                description,
+                usage,
+                size,
+                stock,
+            };
+    
+            try {
+                const response = await fetch('https://db-projekt-2024.onrender.com/inventar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(productData),
+                });
+    
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Produkt erfolgreich gespeichert.');
+                    fetchInventory();
+                } else {
+                    alert(`Fehler: ${data.error}`);
+                }
+            } catch (err) {
+                alert('Fehler beim Speichern des Produkts.');
             }
-        } catch (err) {
-            alert('Fehler beim Speichern des Produkts.');
         }
-    }
-
-    function displayResults(data) {
-        if (!Array.isArray(data) || data.length === 0) {
-            document.getElementById('results').innerHTML = '<p>Keine Produkte gefunden.</p>';
-            return;
-        }
-
-        let table = '<table>';
-        table += `
-            <tr>
-                <th>Produkt-ID</th>
-                <th>Name</th>
-                <th>Kategorie</th>
-                <th>Preis</th>
-                <th>Größe</th>
-                <th>Bestand</th>
-                <th>Aktionen</th>
-            </tr>
-        `;
-
-        data.forEach(product => {
+    
+        function displayResults(data) {
+            if (!Array.isArray(data) || data.length === 0) {
+                document.getElementById('results').innerHTML = '<p>Keine Produkte gefunden.</p>';
+                return;
+            }
+    
+            let table = '<table>';
             table += `
                 <tr>
-                    <td>${product.Product_ID}</td>
-                    <td>${product.Name}</td>
-                    <td>${product.Kategorie}</td>
-                    <td>${product.Preis} CHF</td>
-                    <td>${product.Size}</td>
-                    <td>${product.Stock}</td>
-                    <td>
-                        <button onclick="editProduct(${product.Product_ID}, '${product.Name}', '${product.Kategorie}', ${product.Preis}, '${product.Hersteller || ''}', '${product.Description || ''}', '${product.Size}', ${product.Stock})">Bearbeiten</button>
-
-                        <button onclick="deleteProduct(${product.Product_ID}, '${product.Size}')">Löschen</button>
-                    </td>
+                    <th>Produkt-ID</th>
+                    <th>Name</th>
+                    <th>Kategorie</th>
+                    <th>Preis</th>
+                    <th>Größe</th>
+                    <th>Bestand</th>
+                    <th>Aktionen</th>
                 </tr>
             `;
-        });
-
-        table += '</table>';
-        document.getElementById('results').innerHTML = table;
-    }
-
-    function editProduct(id, name, category, price, Hersteller, description, size, stock) {
-        document.getElementById('productId').value = id;
-        document.getElementById('name').value = name;
-        document.getElementById('category').value = category;
-        document.getElementById('price').value = price;
-        document.getElementById('Hersteller').value = Hersteller; 
-        document.getElementById('description').value = description;
-        document.getElementById('size').value = size;
-        document.getElementById('stock').value = stock;
-    }
-    fetchInventory();
-</script>
     
-</body>
-</html>
+            data.forEach(product => {
+                table += `
+                    <tr>
+                        <td>${product.Product_ID}</td>
+                        <td>${product.Name}</td>
+                        <td>${product.Kategorie}</td>
+                        <td>${product.Preis} CHF</td>
+                        <td>${product.Size}</td>
+                        <td>${product.Stock}</td>
+                        <td>
+                            <button onclick="editProduct(${product.Product_ID}, '${product.Name}', '${product.Kategorie}', ${product.Preis}, '${product.Hersteller || ''}', '${product.Description || ''}', '${product.Size}', ${product.Stock})">Bearbeiten</button>
+                            <button onclick="deleteProduct(${product.Product_ID}, '${product.Size}')">Löschen</button>
+                        </td>
+                    </tr>
+                `;
+            });
+    
+            table += '</table>';
+            document.getElementById('results').innerHTML = table;
+        }
+    
+        function editProduct(id, name, category, price, Hersteller, description, size, stock) {
+            document.getElementById('productId').value = id;
+            document.getElementById('name').value = name;
+            document.getElementById('category').value = category;
+            document.getElementById('price').value = price;
+            document.getElementById('Hersteller').value = Hersteller; 
+            document.getElementById('description').value = description;
+            document.getElementById('size').value = size;
+            document.getElementById('stock').value = stock;
+        }
+    
+        fetchInventory();
+    </script>
+        
+    </body>
+    </html>

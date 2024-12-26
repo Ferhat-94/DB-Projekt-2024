@@ -5,9 +5,12 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 require('dotenv').config(); //.env
 
+const cors = require('cors');
+app.use(cors({
+    origin: 'https://ferhat-94.github.io',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 
-const app = express();
-app.use(cors());
 app.use(express.json());
 
 // MySQL-Verbindung
