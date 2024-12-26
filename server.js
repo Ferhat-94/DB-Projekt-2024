@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
-const cors = require('cors');
 const bcrypt = require('bcrypt');
 require('dotenv').config(); //.env
 
@@ -567,7 +566,7 @@ app.use(express.static(path.join(__dirname, 'docs')));
 
 
 // Server starten
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-    console.log(`Server läuft auf http://localhost:${PORT}`);
+    console.log(`Server läuft`);
 });
