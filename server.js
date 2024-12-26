@@ -201,7 +201,7 @@ app.get('/inventar', (req, res) => {
             pg.Produktgroesse AS Size,
             COALESCE(lb.Menge, 0) AS Stock
         FROM Produkt p
-        LEFT JOIN ProduktProduktgroesse pg ON p.Product_ID = pg.Product_ID
+        LEFT JOIN Produktgroesse pg ON p.Product_ID = pg.Product_ID
         LEFT JOIN Lagerbestand lb ON pg.Size_ID = lb.Size_ID AND lb.Product_ID = p.Product_ID;
     `;
 
