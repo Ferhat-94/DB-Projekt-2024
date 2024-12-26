@@ -1,13 +1,16 @@
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
+const cors = require('cors');
 const bcrypt = require('bcrypt');
 require('dotenv').config(); //.env
 
-const cors = require('cors');
+const app = express();
+
 app.use(cors({
     origin: 'https://ferhat-94.github.io',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true // Cookies
 }));
 
 app.use(express.json());
