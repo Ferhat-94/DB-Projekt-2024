@@ -198,7 +198,7 @@ app.get('/inventar', (req, res) => {
             p.Preis,
             p.Hersteller,
             p.Produktbeschreibung AS Description,
-            pg.Produktgroesse AS Size,
+            pg.Groesse AS Size,  
             COALESCE(lb.Menge, 0) AS Stock
         FROM Produkt p
         LEFT JOIN Produktgroesse pg ON p.Product_ID = pg.Product_ID
@@ -252,17 +252,17 @@ app.post('/inventar', (req, res) => {
 
             // Grösse speichern
             const sizeSql = `
-                INSERT INTO Produktgroesse (Product_ID, Produktgroesse, Lagerbestand) 
+                INSERT INTO Produktgroesse (Product_ID, Groesse, Lagerbestand) 
                 VALUES (?, ?, ?) 
                 ON DUPLICATE KEY UPDATE 
-                    Produktgroesse = VALUES(Produktgroesse), 
+                    Groesse = VALUES(Groesse), 
                     Lagerbestand = VALUES(Lagerbestand);
             `;
             db.query(sizeSql, [insertedProductId, trimmedSize, stock], (err) => {
                 if (err) {
                     return db.rollback(() => {
-                        console.error('Fehler beim Speichern der Grösse:', err.message);
-                        res.status(500).send({ error: 'Fehler beim Speichern der Grösse.' });
+                        console.error('Fehler beim Speichern der Größe:', err.message);
+                        res.status(500).send({ error: 'Fehler beim Speichern der Größe.' });
                     });
                 }
 
@@ -291,15 +291,15 @@ app.put('/inventar', (req, res) => {
 
     const sql = `
         UPDATE Produkt p
-        JOIN Lagerbestand lb ON p.Product_ID = lb.Product_ID
-        JOIN ProduktProduktgroesse pg ON lb.Size_ID = pg.Size_ID
+        JOIN Produktgroesse pg ON p.Product_ID = pg.Product_ID
+        JOIN Lagerbestand lb ON pg.Size_ID = lb.Size_ID
         SET 
             p.Produktname = ?, 
             p.Kategorie = ?, 
             p.Preis = ?, 
-            pg.Produktgroesse = ?, 
+            pg.Groesse = ?, 
             lb.Menge = ?
-        WHERE p.Product_ID = ? AND pg.ProduktProduktgroesse = ?;
+        WHERE p.Product_ID = ? AND pg.Groesse = ?; 
     `;
 
     const params = [productName, category, price, size, stock, productId, size];
@@ -328,7 +328,7 @@ app.delete('/inventar/:productId/:size', (req, res) => {
 
     const sizeSql = `
         SELECT Size_ID FROM Produktgroesse 
-        WHERE Product_ID = ? AND Produktgroesse = ?;
+        WHERE Product_ID = ? AND Groesse = ?; 
     `;
     db.query(sizeSql, [productId, size], (err, results) => {
         if (err) {
