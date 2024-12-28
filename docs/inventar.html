@@ -240,9 +240,8 @@
     
                 if (response.ok) {
                     alert('Produkt erfolgreich gelöscht.');
-                    fetchInventory(); // Aktualisiert die Tabelle
+                    fetchInventory();
                 } else {
-                    const error = await response.json();
                     alert(`Fehler beim Löschen des Produkts: ${error.error}`);
                 }
             } catch (err) {
