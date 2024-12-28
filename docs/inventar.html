@@ -242,6 +242,7 @@
                     alert('Produkt erfolgreich gelöscht.');
                     fetchInventory();
                 } else {
+                    const error = await response.json();
                     alert(`Fehler beim Löschen des Produkts: ${error.error}`);
                 }
             } catch (err) {
